@@ -3,7 +3,7 @@ import random, string, json, requests
 from us.models import Urls
 from django.http import JsonResponse
 from django.template.context_processors import csrf
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 def index(request):
 	c = {}
@@ -21,7 +21,17 @@ def shorten_url(request):
 	if (url == ''):
 		return JsonResponse({'error': "No URL given"})
 
-	# TODO: check if this is an shortened url. in this case, do not handle it.
+	# check if this is already an shortened url. in this case, do not handle it, but simply return
+	end_of_url = url[-4:]
+	try:
+		if (url.startswith(request.build_absolute_uri(reverse('us:redirectoriginal', args=[end_of_url])))):
+			if (is_existing_short_code(end_of_url)):
+				return JsonResponse({'url':url})
+			return JsonResponse({'error': 'Invalid URL {0}'.format(url)})
+	except NoReverseMatch:
+		# nothing found, as expected
+		pass
+		
 		
 	# url was given, now try out whether it exists
 	try:
@@ -41,6 +51,9 @@ def shorten_url(request):
 
 	return JsonResponse({'url':request.build_absolute_uri(reverse('us:redirectoriginal', args=[short_id]))})
 	
+def preview_redirect(request, short_id):
+	#todo implement preview.
+	pass
 
 def get_short_code():
 	length = 4
@@ -53,3 +66,9 @@ def get_short_code():
 		except (Urls.DoesNotExist):
 			return short_id
 
+def is_existing_short_code(short_id):
+	try:
+		Urls.objects.get(pk=short_id)
+		return True
+	except (Urls.DoesNotExist):
+		return False
