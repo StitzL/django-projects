@@ -11,9 +11,37 @@
  </div>
  <div class="col-sm-3">
  {% csrf_token %}
- <button id="submitButton" class="btn btn-primary">Submit</button></p> 
+ <button id="submitButton" class="btn btn-primary">Submit</button>
  </div>
  </div>
  <div class="panel-footer"><span id="url-result">Enter the URL above and click submit!</span></div>
 </div>
+<script type="text/javascript">
+ $(function() {
+ $('#submitButton').click(function() {
+ $.ajax({
+ type: "POST",
+ url: "/makeshort/",
+ data: {
+ 'url' : $('#url').val(),
+ 'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val(),
+ 'error' : ""
+ },
+ success: returnSuccess,
+ dataType: 'json'
+ });
+ });
+});
+ 
+function returnSuccess(data, textStatus, jqXHR) {
+ if(data.url) {
+ $('#url-result').text("URL was successfully shortened: ");
+ $('#url-result').append('<a href="' + data.url + '">' + data.url + '</a>')
+ 
+ } else {
+ $('#url-result').text(data.error); 
+ }
+  
+}
+</script>
 {% endblock %}

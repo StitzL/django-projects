@@ -1,0 +1,18 @@
+{% extends "us/base.html" %}
+ 
+{% block title %}URL Shortener - Make your URL shorter!{% endblock %}
+ 
+{% block content %}
+ 
+<div class="panel panel-default">
+ <div class="panel-body">
+ <div class="col-sm-9">
+ The shortened URL {{ short_url }} 
+ </div>
+ <div class="col-sm-9">
+ {% csrf_token %}
+ expands to <a href="{{ long_url }}">{{ long_url }}</a>
+ </div>
+ </div>
+</div>
+{% endblock %}
