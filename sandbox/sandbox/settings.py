@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+	'admirals.apps.AdmiralsConfig',
 	'us.apps.UsConfig',
 	'polls.apps.PollsConfig',
     'django.contrib.admin',

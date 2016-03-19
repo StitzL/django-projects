@@ -21,7 +21,7 @@
  $('#submitButton').click(function() {
  $.ajax({
  type: "POST",
- url: "/makeshort/",
+ url: "makeshort/",
  data: {
  'url' : $('#url').val(),
  'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val(),

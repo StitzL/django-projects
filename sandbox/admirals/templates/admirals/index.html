@@ -1,0 +1,54 @@
+{% extends "admirals/base.html" %}
+ 
+{% block title %}Welcome on the bridge, Admiral!{% endblock %}
+ 
+{% block content %}
+ 
+<div class="panel panel-default">
+ <div class="panel-body">
+ <div class="col-sm-9">
+ <input type="text" name="playerName" id="playerName" class="form-control input-sm" placeholder="Lars" />
+ </div>
+ <div class="col-sm-3">
+ {% csrf_token %}
+ <button id="startGame" class="btn btn-primary">Attack!</button>
+ </div>
+ </div>
+ <div class="panel-footer"><span id="message">Sir, an enemy fleet has been sighted, but as you will be aware, the weather is deteriorating quickly.
+ We must join battle now or let this chance slip through our hands. What is your command?</span></div>
+</div>
+<script type="text/javascript">
+ $(function() {
+ $('#startGame').click(function() {
+ $.ajax({
+ type: "POST",
+ url: "newgame/",
+ data: {
+ 'player' : $('#playerName').val(),
+ 'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val(),
+ 'error' : ""
+ },
+ success: onError,
+ dataType: 'json'
+ });
+ });
+});
+
+function onError(data, textStatus, jqXHR) {
+ if (data.error) {
+  $('#message').text(data.error); 
+ }
+}
+
+function returnSuccess(data, textStatus, jqXHR) {
+ if(data.url) {
+ $('#url-result').text("URL was successfully shortened: ");
+ $('#url-result').append('<a href="' + data.url + '">' + data.url + '</a>')
+ 
+ } else {
+ $('#url-result').text(data.error); 
+ }
+  
+}
+</script>
+{% endblock %}
